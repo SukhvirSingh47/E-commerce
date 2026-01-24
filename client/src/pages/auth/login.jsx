@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom"
 import UseAuth from "../../context/useAuth";
 import Home from "../public/home";
 import Loader from "../../components/loader";
+import { login } from "../../api/auth.api"
 export function LoginForm({ resetkey }) {
   const [rescolor, setrescolor] = useState("")
   const [res, setres] = useState("")
@@ -15,34 +16,50 @@ export function LoginForm({ resetkey }) {
   async function handleSubmit() {
     const token = localStorage.getItem("token")
     setISUser(prev => ({ ...prev, loading: true }))
+    // try {
+    //   const res = await fetch("http://10.37.101.193:5001/auth/login", {
+    //     method: "POST",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify({
+    //       email: mail,
+    //       password: pass
+    //     })
+    //   });
+    //   const data = await res.json();
+    //   if (res.ok) {
+    //     setrescolor("green");
+    //     localStorage.setItem("token", data.token);
+    //     setres(data.message)
+    //     setISUser(prev => ({ ...prev, user: data.user.name, token: data.token, isLogin: true }))
+    //     setTimeout(() => { // it delay when user login successfully and redirected to / home page
+    //       setISUser(prev => ({ ...prev,  loading: false }))
+    //     }, 2000);
+    //     console.log(data);
+    //     // navigate("/")
+    //   } 
+    //   else {
+    //     setrescolor("red");
+    //     setres(data.message);
+    //     setISUser(prev => ({ ...prev, loading: false, isLogin: false }))
+    //   }
+    // } catch (error) {
+    //   console.log(error)
+    //   console.log("hi I am catched")
+    //   setrescolor("red");
+    //   setres("Server failed")
+    //   setISUser(prev => ({ ...prev, loading: false, isLogin: false }))
+    // }
     try {
-      const res = await fetch("http://10.125.121.193:5001/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: mail,
-          password: pass
-        })
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setrescolor("green");
-        localStorage.setItem("token", data.token);
-        setres(data.message)
-        setISUser(prev => ({ ...prev, user: data.user.name, token: data.token, isLogin: true }))
-        setTimeout(() => { // it delay when user login successfully and redirected to / home page
-          setISUser(prev => ({ ...prev,  loading: false }))
-        }, 2000);
-        console.log(data);
-        // navigate("/")
-      } else {
-        setrescolor("red");
-        setres(data.message);
-        setISUser(prev => ({ ...prev, loading: false, isLogin: false }))
-      }
+      const data = await login(mail, pass)
+      localStorage.setItem("token", data.token);
+      setISUser(prev => ({ ...prev, user: data.user.name, token: data.token, isLogin: true }))
+      setTimeout(() => { // it delay when user login successfully and redirected to / home page
+        setISUser(prev => ({ ...prev, loading: false }))
+      }, 2000);
+      console.log(data);
     } catch (error) {
-      console.log(error)
-      setres(error)
+      setrescolor("red");
+      setres(error.message)
       setISUser(prev => ({ ...prev, loading: false, isLogin: false }))
     }
   }
@@ -55,9 +72,10 @@ export function LoginForm({ resetkey }) {
     if (isUser.isLogin) {
       console.log("i am in navigate")
       navigate("/");
+      // window.location.reload();
     }
   }, [isUser.isLogin])
-  
+
   return (
     <div className="w-3/4">
       <h2 className="text-3xl font-bold text-gray-800 mb-6">Login</h2>
