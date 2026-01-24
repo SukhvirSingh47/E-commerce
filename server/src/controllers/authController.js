@@ -100,42 +100,11 @@ export const loginUser = async (req, res) => {
         res.status(500).json({ message: 'server error' });
     }
 }
-//-----------------------------define user setting controller-----------------------------
-// export const getsettings= async(req,res)=>{
-//     try{
-//         const settings = await UserSetting.findOne({user:req.user.id});
-//         if(!settings){
-//             return res.status(404).json({message:'settings not found, its ok you can create it'});
-//         }
-//         res.status(200).json(settings);
-//     }catch(error){
-//         console.error("error catched",error);
-//         res.status(500).json({message:'error getting user settings database'});
-//     }
-// }
-
-// export const updatesettings= async(req,res)=>{
-//     try{
-//         const {theme}= req.body;
-//         const updates={};
-//         if (theme!== undefined){updates.theme=theme;};
-//         // if (language!==undefined){updates.language=language;};
-
-//         const updatedSettings= await UserSetting.findOneAndUpdate(
-//             {user:req.user.id},
-//             {$set:updates},
-//             {new:true, upsert:true} //upsert:true creates a new document if no document matches the filter
-//         );
-//         res.status(200).json(updatedSettings);
-//     }catch(error){
-//         console.error("error catched",error);
-//         res.status(500).json({message:'error updating user settings database'});
-//     }
-// }
 //------------------------------------------------------------------------------
-export const me = async (req, res) => {
+export const GetMe = async (req, res) => {
     try {
         const user = await User.findById(req.user.id).select('name email');
+        // console.error("me", user);
         res.json({ user, info: req.user });
     } catch (error) {
         console.error("error catched", error);
@@ -143,29 +112,99 @@ export const me = async (req, res) => {
     }
 }
 //-----------------cart controller------------------------------------------
-export const cart = async (req, res) => {
-    const cart = req.body
-    console.log(cart)
-    cart.map((products) => {
-        console.log(products.name)
-    })
-    res.json({ cart })
+export const PutCart = async (req, res) => {
+    try {
+        const { productId, quantity } = req.body;
+
+        let cart = await Cart.findOneAndUpdate(
+            {
+                user: req.user.id,
+                "items.productId": productId
+            },
+            {
+                $inc: { "items.$.quantity": quantity }
+            },
+            { new: true }
+        );
+
+        if (!cart) {
+            cart = await Cart.findOneAndUpdate(
+                { user: req.user.id },
+                {
+                    $push: { items: { productId, quantity } }
+                },
+                { upsert: true, new: true }
+            );
+        }
+
+        const populatedCart = await Cart.findOne({ user: req.user.id })
+            .populate("items.productId");
+
+        return res.status(200).json(populatedCart.items);
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Cart update failed" });
+    }
+};
+
+
+export const GetCart = async (req, res) => {
+    try {
+        const cart = await Cart.findOne({ user: req.user.id }).populate("items.productId")
+        if (!cart) {
+            return res.status(404).json({ message: "cart not found -backend" })
+        }
+        else {
+            console.log("useris :", cart.items)
+            return res.status(200).json(cart.items)
+        }
+    } catch (err) {
+        console.log("error here", err)
+    }
 }
+export const DelCart = async (req, res) => {
+    try {
+        if (!req.body) {
+            return res.status(400).json({ message: 'needs body to delete' })
+        }
+        const { productId, quantity } = req.body; 
+        console.log(productId, quantity)
+        if (!productId) {
+            return res.status(400).json({ message: 'needs product id to delete' })
+        }
+        let cart = await Cart.findOneAndUpdate(
+            { user: req.user.id },
+            { $pull: { items: { productId } } },
+            { new: true } // return the updated document
+        );
 
+        if (!cart) {
+            return res.status(404).json({ message: 'Cart not found' });
+        }
+        const populatedCart = await Cart.findOne({ user: req.user.id })
+            .populate("items.productId");
 
-export const products = async (req, res) => {
+        return res.status(200).json(populatedCart.items);
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ message: "Cart deletion failed" });
+    }
+}
+//---------------------------Query controllers-------------------------------------
+export const GetProducts = async (req, res) => {
     const prodts = await Products.find();
     res.json(prodts);
 }
 
-export const catagory = async (req, res) => {
-    const { category } = req.body
-    if (!category) {
+export const GetQuery = async (req, res) => {
+    const { search } = req.query
+    if (!search) {
         return res.status(400).json({ message: 'please enter request' });
     }
-    console.log(category)
+    console.log(search)
     const prodts = await Products.find({
-        $text: { $search: category }
+        $text: { $search: search }
     });
     res.json(prodts);
     console.log(prodts)
