@@ -1,18 +1,34 @@
-import { Search, Bell, User, ShoppingBag, Menu, ShoppingCart } from "lucide-react";
+import { Search, Bell, User, ShoppingBag, Menu, ShoppingCart, Loader } from "lucide-react";
 import { Input } from "./ui/input.jsx";
 import { Button } from "./ui/button.jsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UseAuth from "../context/useAuth.js";
 import UseCart from "../context/useCart.js"
-import{useNavigate,Link} from 'react-router-dom';
-export function Header({input, handlekey, toggleSidebar, setOpenMobileSearch, openMobileSearch,setinput }) {
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
+import { useNavigate, Link, useActionData } from 'react-router-dom';
+import { useSearchParams } from "react-router-dom";
+
+export function Header({  handlekey, toggleSidebar, setOpenMobileSearch, openMobileSearch}) {
+  // const [isSearchFocused, setIsSearchFocused] = useState(false);
   const { isUser } = UseAuth();
-  const { totalCartItems}=UseCart()
- const navigate = useNavigate();
- function handleLogoClick(){
-  navigate("/")
- }
+  const { totalCartItems } = UseCart()
+  const navigate = useNavigate();
+  const [input, setinput] = useState("")
+  const [searchParams, setSearchParams]= useSearchParams()
+
+  function handleLogoClick() {
+    navigate("/")
+  }
+  function handlekey(event) {
+    if (event.key === 'Enter'&& input.trim()) {
+      navigate(`/products?search=${input}`)
+      
+    }
+  }
+  useEffect(()=>{
+    if(searchParams.get("search")){
+      setinput(searchParams.get("search"))
+    }
+  },[])
   return (
     <header className="border-b bg-white sticky top-0 z-30" onClick={() => setOpenMobileSearch(false)}>
       <div className="container mx-auto px-6 py-4">
@@ -32,14 +48,15 @@ export function Header({input, handlekey, toggleSidebar, setOpenMobileSearch, op
           </div>
 
           {/* Search Bar */}
-          <div className="hidden sm:flex flex-1 max-w-2xl relative " >
+          <div className="hidden sm:flex flex-1 max-w-2xl relative "onKeyDown={handlekey} >
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
             <Input
               type="search"
               placeholder="Search for products..."
               className="pl-10 pr-4 py-6 rounded-full border-gray-200 w-full"
-              onChange={(e)=>setinput(e.target.value)}
-                  value={input}
+              onChange={(e) => setinput(e.target.value)}
+              onKeyDown={handlekey}
+              value={input}
             />
           </div>
 
@@ -48,20 +65,22 @@ export function Header({input, handlekey, toggleSidebar, setOpenMobileSearch, op
           {/* MOBILE SEARCH INPUT POPUP */}
           {openMobileSearch && (
             <div className="sm:hidden mt-3 absolute top-12.5 left-0 right-0 px-6" onClick={(e) => e.stopPropagation()}>
-              <div className="relative">
+              <div className="relative"onKeyDown={handlekey}>
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <Input
                   autoFocus
                   type="search"
                   placeholder="Search for products..."
                   className="pl-10 pr-4 py-5 rounded-full border-gray-200 w-full"
-                  onChange={(e)=>setinput(e.target.value)}
+                  onChange={(e) => setinput(e.target.value)}
+                  onKeyDown={handlekey}
                   value={input}
+                  
                 />
               </div>
             </div>
           )}
-     
+
           {/* Actions */}
           <div className="flex items-center gap-4">
             <Button
@@ -80,14 +99,14 @@ export function Header({input, handlekey, toggleSidebar, setOpenMobileSearch, op
               <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
             </Button>
             <Link to={"/cart"}>
-            <Button variant="ghost" size="icon" className="relative cursor-pointer">
-              <ShoppingCart className="size-6" />
-              {totalCartItems!==0 && <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                {totalCartItems}
-              </span>}
-            </Button>
+              <Button variant="ghost" size="icon" className="relative cursor-pointer">
+                <ShoppingCart className="size-6" />
+                {totalCartItems !== 0 && <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {totalCartItems}
+                </span>}
+              </Button>
             </Link>
-            {isUser.isLogin ? <Button variant="ghost" size="icon" className="cursor-pointer">
+            {isUser.loading ? <Button variant="ghost" size="icon" className="cursor-pointer"><User className="size-6" /></Button> :isUser.isLogin ? <Button variant="ghost" size="icon" className="cursor-pointer">
               <User className="size-6" />
             </Button> : <Button className="cursor-pointer bg-linear-to-br from-blue-600 to-purple-600 animate-bounce">
               <Link to={"/login"}><div className=""><h1>Login</h1></div></Link>
