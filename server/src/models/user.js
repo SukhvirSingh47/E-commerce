@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-
+import Products from './products.js';
 const userSchema= new mongoose.Schema({
     name:{
         type:String,
@@ -17,7 +17,6 @@ const userSchema= new mongoose.Schema({
         type:String,
         required:true,
     }
-
 },{timestamps:true});
 
 export default mongoose.model('User',userSchema);
