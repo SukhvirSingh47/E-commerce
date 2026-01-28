@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:5001";
+const BASE_URL = "https://e-commerce-d771.onrender.com";
 
 export async function http(
   url,
