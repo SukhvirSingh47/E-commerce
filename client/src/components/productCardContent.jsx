@@ -3,13 +3,15 @@ import { CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { ImageWithFallback } from "./fallback/ImageWithFallback";
 import { Button } from "./ui/button";
-import { ShoppingBag } from "lucide-react";
+import { ShoppingBag, ArrowRightIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import UseCart from "../context/useCart";
 const ProductCardContent = React.memo(function ProductCardContent({
     product,
     isInCart,
     handleAddToCart
 }) {
+    const{cart}=UseCart()
     const [imageLoaded, setImageLoaded] = useState(false);
     const navigate = useNavigate()
     const discount = useMemo(() => {
@@ -20,11 +22,11 @@ const ProductCardContent = React.memo(function ProductCardContent({
         );
     }, [product.price, product.originalPrice]);
 
-    console.count("ProductCardContent render");
+    // console.count("ProductCardContent render");
 
     return (
         <CardContent className="p-0">
-            {!imageLoaded && (
+            {/* {!imageLoaded && (
                 <div className="animate-pulse">
                     <div className="bg-gray-200 aspect-square w-full" />
                     <div className="p-3">
@@ -33,20 +35,25 @@ const ProductCardContent = React.memo(function ProductCardContent({
                         <div className="h-8 bg-gray-200 rounded mt-2 w-full"></div>
                     </div>
                 </div>
-            )}
-            <div className={imageLoaded ? "block" : "hidden"}>
-
-                <div className="relative overflow-hidden bg-gray-100">
+            )} */}
+            {/* className={imageLoaded ? "block" : "hidden"} */}
+            <div  >
+                <div className="relative h-full flex justify-center items-center overflow-hidden bg-gray-100 aspect-square">
                     <Badge className="absolute top-4 left-4 z-10 bg-blue-600">
                         {product.badge}
                     </Badge>
-                    <div className="w-full sm:h-65 h-55 bg-gray-100 flex items-center justify-center">
+                    {!imageLoaded && (
+                        <div className="animate-pulse  bg-zinc-50 ">
+                            <div className="bg-zinc-300 aspect-square w-full" />
+                        </div>
+                    )}
+                    <div className={imageLoaded ? "block" : "hidden"}>
                         <ImageWithFallback
-                            src={product.image}
+                            src={product.image[0]}
                             alt={product.name}
                             loading="eager"
-                            decoding="sync"
-                            className="max-h-full max-w-full group-hover:scale-110 transition-transform duration-300"
+                            decoding="async"
+                            className="w-full h-full group-hover:scale-110 transition-transform duration-300"
                             onLoad={() => setImageLoaded(true)}
                         />
                     </div>
@@ -83,13 +90,18 @@ const ProductCardContent = React.memo(function ProductCardContent({
                         </Badge>
                     </div>
 
-                    <Button onclick={() => {
-                        if (isInCart) {
-                            navigate("/cart")
-                        } else { handleAddToCart(product) }
-                    }} className="w-full gap-2">
+                    <Button onclick={(e) => {e.stopPropagation()
+                            if (isInCart) {
+                                navigate("/cart")
+                            } else { handleAddToCart(product) }
+                            // console.log(isInCart)
+                            // console.log(cart.map(item => item.productId._id))
+                            // console.log(product._id)
+                            // console.log(isInCart)
+                        }}
+                    className="w-full gap-2">
                         <ShoppingBag className="w-4 h-4" />
-                        {isInCart ? "Go to cart" : "Add to Cart"}
+                        {isInCart ? <div className="flex justify-center items-center gap-2">Goto Cart <ArrowRightIcon/></div> : "Add to Cart"}
                     </Button>
                 </div>
             </div>

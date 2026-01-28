@@ -102,15 +102,25 @@ export const loginUser = async (req, res) => {
 }
 //------------------------------------------------------------------------------
 export const GetMe = async (req, res) => {
-    try {
-        const user = await User.findById(req.user.id).select('name email');
-        // console.error("me", user);
-        res.json({ user, info: req.user });
-    } catch (error) {
-        console.error("error catched", error);
-        res.status(500).json({ message: 'error getting user details' });
+  try {
+    const user = await User.findById(req.user.id)
+      .select("_id name email");
+
+    if (!user) {
+      return res.status(401).json({
+        message: "User not found or token invalid"
+      });
     }
-}
+
+    res.status(200).json({ user });
+  } catch (error) {
+    console.error("GET /auth/me error:", error);
+    res.status(500).json({
+      message: "Error getting user details"
+    });
+  }
+};
+
 //-----------------cart controller------------------------------------------
 export const PutCart = async (req, res) => {
     try {
@@ -198,14 +208,30 @@ export const GetProducts = async (req, res) => {
 }
 
 export const GetQuery = async (req, res) => {
-    const { search } = req.query
-    if (!search) {
-        return res.status(400).json({ message: 'please enter request' });
+    try {
+        const { search } = req.query;
+        if (!search) {
+            return res.status(400).json({ message: 'please enter request' });
+        }
+        const prodts = await Products.find({ $text: { $search: search } });
+        res.json(prodts);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
     }
-    console.log(search)
-    const prodts = await Products.find({
-        $text: { $search: search }
-    });
-    res.json(prodts);
-    console.log(prodts)
+}
+
+export const GetProductInfo = async (req, res)=>{
+    try {
+        const {id}=req.query
+        if(!id){
+            return res.status(400).json({ message: 'please give product id' });
+        }
+        console.log(id)
+        const product= await Products.findById(id)
+        return res.status(200).json(product)
+        console.log(product)
+    } catch (error) {
+        console.log("error:", error)
+    }
 }

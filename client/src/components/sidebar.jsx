@@ -1,6 +1,5 @@
 import UseAuth from "../context/useAuth"
 import { Button } from "./ui/button"
-import Loader from "./loader"
 import { useState } from "react"
 import ConfirmModal from "./ui/confirmModal"
 export default function Sidebar(){

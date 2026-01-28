@@ -2,7 +2,7 @@ import {useState, useEffect} from "react";
 import ContextApi from "./contextApi";
 import { getMe } from "../api/auth.api";
 export default function ContextProvider({children}){
-    const [isUser, setISUser]=useState({ user: null, token:null, isLogin:false, loading:true })
+    const [isUser, setISUser]=useState({ user: null, email:null, token:null, isLogin:false, loading:true })
     
     useEffect(()=>{
         const token= localStorage.getItem("token")
@@ -12,38 +12,16 @@ export default function ContextProvider({children}){
                 setISUser(prev=>({...prev, loading:false }));
             }, 1000);
             return;
-           } 
-        //    try{
-        //     const res= await  fetch("http://10.37.101.193:5001/auth/me",{
-        //         headers:{
-        //             "Content-Type": "application/json",
-        //             "Authorization": `Bearer ${token}`
-        //         }
-        //     })
-        //     if (!res.ok){
-        //         throw new Error("Invalid token")
-        //     }
-        //     const data= await res.json();
-        //     setTimeout(() => { // is it used to delay when use is logged in and first enter the / home route
-        //         setISUser(prev=>({...prev,user: data.user.name, loading:false, isLogin:true }))
-        //     }, 1000);
-        //     //  console.log(isUser.user)
-        //    }catch(err){
-        //     if (err==="Invalid token"){
-        //         // localStorage.removeItem("token")
-        //     }
-        //     console.log("catched from context API",err)
-        //     setISUser(prev=>({...prev, loading:false, isLogin:false }))
-        //    }
+           }
            try {
             const data= await getMe()
             setTimeout(() => { // is it used to delay when use is logged in and first enter the / home route
-                setISUser(prev=>({...prev,user: data.user.name, loading:false, isLogin:true }))
+                setISUser(prev=>({...prev,user: data.user.name, email:data.user.email, loading:false, isLogin:true }))
             }, 1000);
             console.log(isUser.user)
            } catch (error) {
-            localStorage.removeItem("token")
-            console.log("catched from context API",err)
+            // localStorage.removeItem("token")
+            console.log("catched from context API",error)
             setISUser(prev=>({...prev, loading:false, isLogin:false }))
            }
         }

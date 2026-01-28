@@ -8,7 +8,7 @@ const Card = React.memo(function Card({
   children,
   ...props
 }) {
-  console.count("Card render");
+  // console.count("Card render");
 
   return (
     <div
