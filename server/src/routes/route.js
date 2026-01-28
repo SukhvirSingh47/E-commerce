@@ -1,5 +1,5 @@
 import express from 'express';
-import { registerUser, loginUser, GetMe, GetProducts, GetQuery, GetCart, PutCart,DelCart} from "../controllers/authController.js";
+import { registerUser, loginUser, GetMe, GetProducts, GetQuery, GetCart, PutCart,DelCart,GetProductInfo} from "../controllers/authController.js";
 import { authMiddleware } from '../middleware/protect.js';
 const app_router= express.Router();
  
@@ -10,6 +10,7 @@ app_router.get('/me',authMiddleware, GetMe)
 app_router.get('/cart',authMiddleware, GetCart)
 app_router.get('/products', GetProducts)
 app_router.get('/query', GetQuery)
+app_router.get('/productInfo', GetProductInfo)
 
 app_router.put('/cart',authMiddleware,PutCart)
 

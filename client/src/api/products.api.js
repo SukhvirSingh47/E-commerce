@@ -14,3 +14,11 @@ export const getproductList = (search) =>
             auth: false
         }
     )  
+
+export const getproductInfo =(id)=>
+    
+    http(`/auth/productInfo?id=${id}`,
+        {
+            auth:false
+        }
+    )
