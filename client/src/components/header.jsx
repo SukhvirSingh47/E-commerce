@@ -7,30 +7,31 @@ import UseCart from "../context/useCart.js"
 import { useNavigate, Link, useActionData } from 'react-router-dom';
 import { useSearchParams } from "react-router-dom";
 
-export function Header({  handlekey, toggleSidebar, setOpenMobileSearch, openMobileSearch}) {
+
+export function Header({ handlekey, toggleSidebar, setOpenMobileSearch, openMobileSearch }) {
   // const [isSearchFocused, setIsSearchFocused] = useState(false);
   const { isUser } = UseAuth();
   const { totalCartItems } = UseCart()
   const navigate = useNavigate();
   const [input, setinput] = useState("")
-  const [searchParams, setSearchParams]= useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
 
   function handleLogoClick() {
     navigate("/")
   }
   function handlekey(event) {
-    if (event.key === 'Enter'&& input.trim()) {
+    if (event.key === 'Enter' && input.trim()) {
       navigate(`/products?search=${input}`)
-      
+
     }
   }
-  useEffect(()=>{
-    if(searchParams.get("search")){
+  useEffect(() => {
+    if (searchParams.get("search")) {
       setinput(searchParams.get("search"))
     }
-  },[])
+  }, [])
   return (
-    <header className="border-b bg-white sticky top-0 z-30" onClick={() => setOpenMobileSearch(false)}>
+    <header className="border-b border-[#e5e5e0] bg-white sticky top-0 z-30" onClick={() => setOpenMobileSearch(false)}>
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between gap-8 relative">
           {/* Logo */}
@@ -48,7 +49,7 @@ export function Header({  handlekey, toggleSidebar, setOpenMobileSearch, openMob
           </div>
 
           {/* Search Bar */}
-          <div className="hidden sm:flex flex-1 max-w-2xl relative "onKeyDown={handlekey} >
+          <div className="hidden sm:flex flex-1 max-w-2xl relative " onKeyDown={handlekey} >
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
             <Input
               type="search"
@@ -65,7 +66,7 @@ export function Header({  handlekey, toggleSidebar, setOpenMobileSearch, openMob
           {/* MOBILE SEARCH INPUT POPUP */}
           {openMobileSearch && (
             <div className="sm:hidden mt-3 absolute top-12.5 left-0 right-0 px-6" onClick={(e) => e.stopPropagation()}>
-              <div className="relative"onKeyDown={handlekey}>
+              <div className="relative" onKeyDown={handlekey}>
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <Input
                   autoFocus
@@ -75,7 +76,7 @@ export function Header({  handlekey, toggleSidebar, setOpenMobileSearch, openMob
                   onChange={(e) => setinput(e.target.value)}
                   onKeyDown={handlekey}
                   value={input}
-                  
+
                 />
               </div>
             </div>
@@ -106,11 +107,19 @@ export function Header({  handlekey, toggleSidebar, setOpenMobileSearch, openMob
                 </span>}
               </Button>
             </Link>
-            {isUser.loading ? <Button variant="ghost" size="icon" className="cursor-pointer"><User className="size-6" /></Button> :isUser.isLogin ? <Button variant="ghost" size="icon" className="cursor-pointer">
-              <User className="size-6" />
-            </Button> : <Button className="cursor-pointer bg-linear-to-br from-blue-600 to-purple-600 animate-bounce">
-              <Link to={"/login"}><div className=""><h1>Login</h1></div></Link>
-            </Button>}
+            {
+              isUser.loading ? 
+              <Button variant="ghost" size="icon" className="cursor-pointer"><User className="size-6" /></Button> 
+              : isUser.isLogin ?
+                <Link to={"/dashboard"}><Button variant="ghost" size="icon" className="cursor-pointer">
+                  <User className="size-6" />
+                </Button>
+                </Link>
+                :
+                <Button className="cursor-pointer bg-linear-to-br from-blue-600 to-purple-600 animate-bounce">
+                  <Link to={"/login"}><div className=""><h1>Login</h1></div></Link>
+                </Button>
+            }
             <Button size="icon" variant="ghost" className="cursor-pointer" onClick={toggleSidebar}>
               <Menu className="size-6"></Menu>
             </Button>
