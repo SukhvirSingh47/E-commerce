@@ -4,35 +4,42 @@ import SocialIcon from "../../components/ui/icon";
 import { LoginForm } from "./login";
 import { RegisterForm } from "./register";
 import UseAuth from "../../context/useAuth";
-import Loader from "../../components/loader";
+// import Loader from "../../components/loader";
 
 export default function AuthSlider() {
   const [login, setLogin] = useState(true);
   const [resetkey, setresetkey] = useState(0);
-  const{isUser}=UseAuth()
+  const [loading, setloading] = useState(false)
+  const { isUser } = UseAuth()
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="relative w-225 h-130 bg-white rounded-3xl shadow-xl overflow-hidden">
+      <div className="relative hidden sm:block w-225 h-130 bg-white rounded-3xl shadow-xl overflow-hidden">
 
         {/* FORMS CONTAINER */}
         <div className="absolute inset-0 flex">
 
           {/* REGISTER FORM */}
           <div
-            className={`w-1/2 flex items-center justify-center transition-all duration-700 ease-in-out
+            className={`w-1/2 flex relative items-center justify-center transition-all duration-700 ease-in-out
             ${login ? "opacity-0 -translate-x-100 pointer-events-none"
-                : "opacity-100 translate-x-0"}`}
+                : "opacity-100 translate-x-0 "}`}
           >
-            <RegisterForm resetkey={resetkey} />
+            {loading && <div className="absolute inset-0 bg-[#f0ebeb59] z-10 flex items-center justify-center rounded-2xl">
+              <h1 className="text-green-600 flex">just wait....</h1>
+            </div>}
+            <RegisterForm resetkey={resetkey} loading={{loading,setloading}} />
           </div>
 
           {/* LOGIN FORM */}
           <div
-            className={`w-1/2 flex items-center justify-center transition-all duration-700 ease-in-out
+            className={`w-1/2 flex relative items-center justify-center transition-all duration-700 ease-in-out
             ${login ? "opacity-100 translate-x-0"
                 : "opacity-0 translate-x-100 pointer-events-none"}`}
           >
-            <LoginForm resetkey={resetkey} />
+            {loading && <div className="absolute inset-0 bg-[#f0ebeb59] z-10 flex items-center justify-center rounded-2xl">
+              <h1 className="text-green-600 flex">just wait....</h1>
+            </div>}
+            <LoginForm resetkey={resetkey} loading={{loading,setloading}} />
           </div>
         </div>
 
@@ -43,7 +50,7 @@ export default function AuthSlider() {
           ${login ? "left-0 rounded-r-[120px] bg-linear-to-br from-blue-600 to-purple-600"
               : "left-1/2 rounded-l-[120px] bg-linear-to-br from-purple-600 to-blue-600"}`}
         >
-          <div className={`flex h-full justify-center items-center text-center w-full transition-all duration-750 ease-in-out ${login?"translate-x-1/2":"-translate-x-1/2"}`} >
+          <div className={`flex h-full justify-center items-center text-center w-full transition-all duration-750 ease-in-out ${login ? "translate-x-1/2" : "-translate-x-1/2"}`} >
 
             <div className="h-full flex flex-col justify-center items-center text-center px-10 w-full shrink-0">
               <h2 className="text-3xl font-bold mb-4">
@@ -77,6 +84,81 @@ export default function AuthSlider() {
         </div>
 
       </div>
+      {/* MOBILE VIEW */}
+      <div className="w-full max-w-md sm:hidden bg-white rounded-2xl gap-6 flex flex-col  items-center shadow-xl p-6 overflow-hidden">
+        <div className="flex items-center gap-3 cursor-pointer" >
+          <div className="bg-linear-to-br from-blue-600 to-purple-600 rounded-xl p-2 px-3 shadow-lg">
+            <span className="text-white fredoka-logo font-bold text-2xl">CW</span>
+          </div>
+          <span className="font-bold text-[28px] flex fredoka-logo"><h1
+            className="font-fredoka font-semibold tracking-[-0.035em]
+              bg-linear-to-br from-blue-600 to-purple-600
+              bg-clip-text text-transparent"
+          >
+            CartWell
+          </h1></span>
+        </div>
+        {/* Mobile Header Toggle WITH PURPLE SLIDER */}
+        <div className="w-full p-1  bg-gray-100 rounded-xl ">
+
+          <div className="relative  overflow-hidden">
+            <div
+              className={`absolute  top-0 left-0 h-full w-1/2 
+        bg-linear-to-r from-blue-600 to-purple-600
+        rounded-lg transition-transform duration-500 ease-in-out
+        ${login ? "translate-x-0" : "translate-x-full"}`}
+            />
+
+            <div className="relative z-10 flex w-full ">
+              <button
+                onClick={() => setLogin(true)}
+                className={`flex-1 py-2 text-sm  font-medium transition
+          ${login ? "text-white" : "text-gray-600"}`}
+              >
+                Login
+              </button>
+              <button
+                onClick={() => setLogin(false)}
+                className={`flex-1 py-2 text-sm  font-medium transition
+          ${!login ? "text-white" : "text-gray-600"}`}
+              >
+                Register
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* FORM AREA — PERFECTLY CENTERED */}
+        <div className="relative overflow-hidden min-h-[380px] flex items-center">
+          <div
+            className={`flex w-full transition-transform duration-500 ease-in-out
+      ${login ? "translate-x-0" : "-translate-x-full"}`}
+          >
+            {/* Login */}
+            <div className="w-full relative shrink-0 flex justify-center">
+              {loading && <div className="absolute inset-0 bg-[#f0ebeb59] z-10 flex items-center justify-center rounded-2xl">
+                <h1 className="text-green-600 flex">just wait....</h1>
+              </div>}
+              <div className="w-full max-w-sm mx-auto flex flex-col items-center">
+                <LoginForm resetkey={resetkey} loading={loading} />
+              </div>
+            </div>
+
+            {/* Register */}
+            <div className="w-full relative shrink-0 flex justify-center">
+              {loading && <div className="absolute inset-0 bg-[#f0ebeb59] z-10 flex items-center justify-center rounded-2xl">
+                <h1 className="text-green-600 flex">just wait....</h1>
+              </div>}
+              <div className="w-full max-w-sm mx-auto flex flex-col items-center">
+                <RegisterForm resetkey={resetkey} loading={loading} />
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+
     </div>
   );
 }

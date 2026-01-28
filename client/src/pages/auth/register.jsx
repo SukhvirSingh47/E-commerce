@@ -4,7 +4,8 @@ import { Social } from "./authSlider";
 import UseAuth from "../../context/useAuth";
 import { useNavigate } from "react-router-dom";
 import { register } from "../../api/auth.api";
-export function RegisterForm({ resetkey }) {
+
+export function RegisterForm({ resetkey, loading }) {
     const navigate = useNavigate()
     const [res, setres] = useState("")
     const [rescolor, setrescolor] = useState("")
@@ -13,6 +14,12 @@ export function RegisterForm({ resetkey }) {
     const [mail, setmail] = useState("")
     const { isUser, setISUser } = UseAuth()
     async function handleSubmit() {
+        loading.setloading(true)
+        setres("")
+        if (!mail || !pass||!name) {
+
+            return setrescolor("red"), setres("All fields are required"), loading.setloading(false)
+        }
         setISUser(prev => ({ ...prev, loading: true }))
         try {
             const data = await register(name, mail, pass)
@@ -22,14 +29,14 @@ export function RegisterForm({ resetkey }) {
                 setISUser(prev => ({ ...prev, loading: false }))
             }, 2000);
             console.log(data);
+            loading.setloading(false)
         } catch (error) {
             setrescolor("red");
             setres(error.message)
+            loading.setloading(false)
             setISUser(prev => ({ ...prev, loading: false, isLogin: false }))
         }
     }
-
-
     useEffect(() => {
         setname("");
         setmail("");
