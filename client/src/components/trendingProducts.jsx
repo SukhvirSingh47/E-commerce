@@ -2,35 +2,25 @@ import { Card } from "./ui/card";
 import { TrendingUp } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 import UseCart from "../context/useCart"
-import PageSkeleton from "./pageSkeleton";
+import PageSkeleton from "./skeletons/pageSkeleton.jsx";
 import ProductCardContent from "./productCardContent";
 import { getproducts } from "../api/products.api";
+import { useNavigate } from "react-router-dom";
 export function TrendingProducts({ }) {
 
   const { cart, handleAddToCart, totalCartItems } = UseCart()
   const [productList, setProductList] = useState([])
   const [loading, setLoading] = useState(true)
+  const navigate=useNavigate()
 
   const cartIds = useMemo(
     () => new Set(cart.map(item => item.productId._id)),
     [cart]
   );
+
   useEffect(() => {
     async function GetProducts() {
       setLoading(true);
-      // try {
-      //   const res = await fetch("http://10.37.101.193:5001/auth/products");
-      //   if (res.ok) {
-      //     const products = await res.json()
-      //     console.log(products)
-      //     setProductList(products)
-      //     setLoading(false)
-      //   }
-
-      // } catch (err) {
-      //   console.log("error while fetching products", err)
-      //   setLoading(false)
-      // }
       try {
         const products=await getproducts()
         setProductList(products)
@@ -43,15 +33,6 @@ export function TrendingProducts({ }) {
     GetProducts()
   }, [])
 
-  // useEffect(() => {
-  //   console.log("Productlist:", productList)
-  // }, [productList])
-  // useEffect(() => {
-  //   if (totalCartItems) {
-
-  //     console.log(cart, totalCartItems);
-  //   }
-  // }, [totalCartItems])
   return (
     <section className="py-8 bg-gray-50">
       <div className="container mx-auto px-6">
@@ -65,11 +46,12 @@ export function TrendingProducts({ }) {
           </div>
         </div>
         {loading ? <PageSkeleton /> :
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 md:gap-6 sm:gap-4 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 md:gap-6 sm:gap-4 gap-2">
             {productList.map((product) => (
               <Card
               key={product._id}
               className=" overflow-hidden hover:shadow-xl transition-all duration-300 group cursor-pointer"
+              onClick= {()=>{navigate(`/productInfo/${product._id}`)}}
               >
                 <ProductCardContent
                   isInCart={cartIds.has(product._id)}
