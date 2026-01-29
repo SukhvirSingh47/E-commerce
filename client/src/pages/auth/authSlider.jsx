@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Chrome, Facebook, Github, Linkedin, User, Lock, Mail } from "lucide-react";
+import { Chrome, Facebook, Github, Linkedin, User, Lock, Mail, } from "lucide-react";
 import SocialIcon from "../../components/ui/icon";
 import { LoginForm } from "./login";
 import { RegisterForm } from "./register";
@@ -12,34 +12,31 @@ export default function AuthSlider() {
   const [loading, setloading] = useState(false)
   const { isUser } = UseAuth()
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="relative hidden sm:block w-225 h-130 bg-white rounded-3xl shadow-xl overflow-hidden">
-
+    <div className="min-h-screen  flex items-center justify-center bg-gray-100">
+      
+      <div className="relative hidden relative sm:block w-225 h-130 bg-white rounded-3xl shadow-xl overflow-hidden">
+{loading && <div className="absolute inset-0 bg-[#3838381c] z-10 flex items-center justify-center rounded-2xl">
+              <h1 className="text-green-600 flex"> <div className="loader"></div></h1>
+            </div>}
         {/* FORMS CONTAINER */}
         <div className="absolute inset-0 flex">
 
           {/* REGISTER FORM */}
           <div
-            className={`w-1/2 flex relative items-center justify-center transition-all duration-700 ease-in-out
+            className={`w-1/2 flex items-center justify-center transition-all duration-700 ease-in-out
             ${login ? "opacity-0 -translate-x-100 pointer-events-none"
                 : "opacity-100 translate-x-0 "}`}
           >
-            {loading && <div className="absolute inset-0 bg-[#f0ebeb59] z-10 flex items-center justify-center rounded-2xl">
-              <h1 className="text-green-600 flex">just wait....</h1>
-            </div>}
-            <RegisterForm resetkey={resetkey} loading={{loading,setloading}} />
+            <RegisterForm resetkey={resetkey} loading={{ loading, setloading }} />
           </div>
 
           {/* LOGIN FORM */}
           <div
-            className={`w-1/2 flex relative items-center justify-center transition-all duration-700 ease-in-out
+            className={`w-1/2 flex items-center justify-center transition-all duration-700 ease-in-out
             ${login ? "opacity-100 translate-x-0"
                 : "opacity-0 translate-x-100 pointer-events-none"}`}
           >
-            {loading && <div className="absolute inset-0 bg-[#f0ebeb59] z-10 flex items-center justify-center rounded-2xl">
-              <h1 className="text-green-600 flex">just wait....</h1>
-            </div>}
-            <LoginForm resetkey={resetkey} loading={{loading,setloading}} />
+            <LoginForm resetkey={resetkey} loading={{ loading, setloading }} />
           </div>
         </div>
 
@@ -85,7 +82,10 @@ export default function AuthSlider() {
 
       </div>
       {/* MOBILE VIEW */}
-      <div className="w-full max-w-md sm:hidden bg-white rounded-2xl gap-6 flex flex-col  items-center shadow-xl p-6 overflow-hidden">
+      <div className="w-full max-w-md sm:hidden relative bg-white rounded-2xl gap-6 flex flex-col  items-center shadow-xl p-6 overflow-hidden">
+        {loading && <div className="absolute inset-0 bg-[#3838381c] z-10 flex items-center justify-center rounded-2xl">
+          <h1 className="text-green-600 flex"><div className="loader"></div></h1>
+        </div>}
         <div className="flex items-center gap-3 cursor-pointer" >
           <div className="bg-linear-to-br from-blue-600 to-purple-600 rounded-xl p-2 px-3 shadow-lg">
             <span className="text-white fredoka-logo font-bold text-2xl">CW</span>
@@ -111,14 +111,14 @@ export default function AuthSlider() {
 
             <div className="relative z-10 flex w-full ">
               <button
-                onClick={() => setLogin(true)}
+                onClick={() => { setLogin(true); setresetkey(resetkey + 1) }}
                 className={`flex-1 py-2 text-sm  font-medium transition
           ${login ? "text-white" : "text-gray-600"}`}
               >
                 Login
               </button>
               <button
-                onClick={() => setLogin(false)}
+                onClick={() => { setLogin(false); setresetkey(resetkey + 1) }}
                 className={`flex-1 py-2 text-sm  font-medium transition
           ${!login ? "text-white" : "text-gray-600"}`}
               >
@@ -129,28 +129,22 @@ export default function AuthSlider() {
         </div>
 
         {/* FORM AREA — PERFECTLY CENTERED */}
-        <div className="relative overflow-hidden min-h-[380px] flex items-center">
+        <div className="relative overflow-hidden min-h-95 flex items-center">
           <div
             className={`flex w-full transition-transform duration-500 ease-in-out
       ${login ? "translate-x-0" : "-translate-x-full"}`}
           >
             {/* Login */}
-            <div className="w-full relative shrink-0 flex justify-center">
-              {loading && <div className="absolute inset-0 bg-[#f0ebeb59] z-10 flex items-center justify-center rounded-2xl">
-                <h1 className="text-green-600 flex">just wait....</h1>
-              </div>}
+            <div className="w-full shrink-0 flex justify-center">
               <div className="w-full max-w-sm mx-auto flex flex-col items-center">
-                <LoginForm resetkey={resetkey} loading={loading} />
+                <LoginForm resetkey={resetkey} loading={{ loading, setloading }} />
               </div>
             </div>
 
             {/* Register */}
-            <div className="w-full relative shrink-0 flex justify-center">
-              {loading && <div className="absolute inset-0 bg-[#f0ebeb59] z-10 flex items-center justify-center rounded-2xl">
-                <h1 className="text-green-600 flex">just wait....</h1>
-              </div>}
+            <div className="w-full shrink-0 flex justify-center">
               <div className="w-full max-w-sm mx-auto flex flex-col items-center">
-                <RegisterForm resetkey={resetkey} loading={loading} />
+                <RegisterForm resetkey={resetkey} loading={{ loading, setloading }} />
               </div>
             </div>
           </div>

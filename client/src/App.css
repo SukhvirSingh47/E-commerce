@@ -6,3 +6,39 @@
   -ms-overflow-style: none;  /* for IE and Edge */
   scrollbar-width: none;     /* for Firefox */
 }
+.loader {
+  width: 48px;
+  aspect-ratio: 0.75;
+
+  --purple: #4e00d4; /* 🔮 change to your website purple */
+  --bar: no-repeat linear-gradient(var(--purple) 0 0);
+
+  background:
+    var(--bar) 0%   50%,
+    var(--bar) 50%  50%,
+    var(--bar) 100% 50%;
+
+  background-size: 20% 50%;
+  animation: bar-loader 1s infinite linear alternate;
+}
+
+@keyframes bar-loader {
+  0% {
+    background-size: 20% 50%, 20% 50%, 20% 50%;
+  }
+  20% {
+    background-size: 20% 20%, 20% 50%, 20% 50%;
+  }
+  40% {
+    background-size: 20% 100%, 20% 20%, 20% 50%;
+  }
+  60% {
+    background-size: 20% 50%, 20% 100%, 20% 20%;
+  }
+  80% {
+    background-size: 20% 50%, 20% 50%, 20% 100%;
+  }
+  100% {
+    background-size: 20% 50%, 20% 50%, 20% 50%;
+  }
+}
