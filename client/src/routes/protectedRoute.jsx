@@ -1,39 +1,21 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { getMe } from "../api/auth.api";
+import UserDashboardSkeleton from "../components/skeletons/UserDashboardSkeleton.jsx";
+import UseAuth from "../context/useAuth.js";
 
 export default function ProtectedRoute() {
-  const [loading, setLoading] = useState(true);
-  const [authorized, setAuthorized] = useState(false);
+  
+  const { isUser } = UseAuth();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        await getMe(); 
-        setAuthorized(true);
-      } catch (err) {
-        console.error("Auth failed:", err);
-        localStorage.removeItem("token");
-        setAuthorized(false);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkAuth();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="min-h-dvh flex items-center justify-center text-lg">
-        Checking authentication...
-      </div>
-    );
+  // If auth is still loading and there's no user, show a loader
+  if (isUser.loading && !isUser.isLogin) {
+    return <UserDashboardSkeleton />;
   }
 
-  if (!authorized) {
-    return <Navigate to="/login" replace />;
+  // If no user is present, redirect to login
+  if (!isUser.isLogin) {
+    return <Navigate to="/login" />;
   }
 
+  // If user is authenticated and data is ready, render the children without loader
   return <Outlet />;
 }

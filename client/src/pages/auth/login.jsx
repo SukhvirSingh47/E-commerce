@@ -13,26 +13,26 @@ export function LoginForm({ resetkey, loading }) {
   const [res, setres] = useState("")
   const [mail, setmail] = useState("")
   const [pass, setpass] = useState("")
-  
+
   const { isUser, setISUser } = UseAuth()
   const navigate = useNavigate();
   async function handleSubmit() {
     loading.setloading(true)
     setres("")
     if (!mail || !pass) {
-      
-      return setrescolor("red"), setres("All fields are required"),loading.setloading(false)
+
+      return setrescolor("red"), setres("All fields are required"), loading.setloading(false)
     }
     // const token = localStorage.getItem("token")
     setISUser(prev => ({ ...prev, loading: true }))
     try {
       const data = await login(mail, pass)
       localStorage.setItem("token", data.token);
-      setISUser(prev => ({ ...prev, user: data.user.name, token: data.token, isLogin: true }))
+      setISUser(prev => ({ ...prev, user: data.user.name, token: data.token, isLogin: true, role: data.user.role }))
       setTimeout(() => { // it delay when user login successfully and redirected to / home page
         setISUser(prev => ({ ...prev, loading: false }))
       }, 2000);
-      console.log(data);
+      console.log(data,data.user.role);
       loading.setloading(false)
     } catch (error) {
       setrescolor("red");
@@ -44,19 +44,23 @@ export function LoginForm({ resetkey, loading }) {
   useEffect(() => {
     setmail("");
     setpass("")
-    setres(""); 
+    setres("");
   }, [resetkey])
   useEffect(() => {
     if (isUser.isLogin) {
-      console.log("i am in navigate")
-      navigate("/");
-      // window.location.reload();
+      console.log(isUser.role,isUser.role === "admin")
+     if (isUser.role === "admin") {
+        navigate("/admin"); // Admin dashboard
+         console.log("hello iM in admin")
+      } else {
+        navigate("/"); // Normal user home
+      }
     }
   }, [isUser.isLogin])
 
   return (
     <div className="w-3/4">
-      
+
       <h2 className="text-3xl font-bold text-gray-800 mb-6">Login</h2>
       <FormInput placeholder="Email" value={mail} onchange={(e) => setmail(e.target.value)} />
       <FormInput placeholder="Password" value={pass} type="password" onchange={(e) => setpass(e.target.value)} />
@@ -64,10 +68,10 @@ export function LoginForm({ resetkey, loading }) {
       <p className="text-sm text-purple-600 text-right mb-4 cursor-pointer">
         Forgot password?
       </p>
-      <button className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg active:bg-purple-700" onClick={handleSubmit }>
+      <button className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg active:bg-purple-700" onClick={handleSubmit}>
         Login
       </button>
       <Social />
     </div>
-  ); 
+  );
 }

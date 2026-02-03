@@ -11,6 +11,8 @@ import ProductDetails from './pages/public/productDetails.jsx'
 import ScrollToTop from "./components/scrollToTop.jsx"
 import UserDashboard from "./pages/user/dashboard.jsx";
 import ProtectedRoute from './routes/protectedRoute.jsx'
+import AdminRoute from './routes/adminRoute.jsx'
+import AdminDashboard from './pages/admin/adminDashboard.jsx'
 function App() {
 
   return (
@@ -31,6 +33,9 @@ function App() {
         <Route path='/cart' element={<CartDisplay />} />
         <Route path='/products' element={<ProductLists />} />
         <Route path='/productInfo/:id' element={<ProductDetails />} />
+        <Route element={<AdminRoute />}>
+          <Route path='/admin/*' element={<AdminDashboard />} />
+        </Route>
         {/* <Route path='/dashboard' element={<UserDashboard />} /> */}
         {/* Protected routes */}
         <Route element={<ProtectedRoute />}>
