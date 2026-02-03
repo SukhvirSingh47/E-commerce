@@ -7,7 +7,7 @@ const porductSchema = new mongoose.Schema({
         trim: true
     }
     ,
-    discriprtion: {
+    description: {
         type: String,
         trim: true
     }

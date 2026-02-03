@@ -92,6 +92,7 @@ export const loginUser = async (req, res) => {
                 id: existingUser._id,
                 name: existingUser.name,
                 email: existingUser.email,
+                role: existingUser.role,
             },
         });
     }
@@ -104,7 +105,7 @@ export const loginUser = async (req, res) => {
 export const GetMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id)
-      .select("_id name email");
+      .select("_id name email role");
 
     if (!user) {
       return res.status(401).json({
@@ -235,3 +236,48 @@ export const GetProductInfo = async (req, res)=>{
         console.log("error:", error)
     }
 }
+//---------------------------Admin controllers-------------------------------------
+export const createProduct = async (req, res) => {
+  try {
+    const {
+      name,
+      description,
+      originalPrice,
+      price,
+      category,
+      stock,
+      image,
+      brand,
+    } = req.body;
+
+    if (!name || !price || !category) {
+      return res.status(400).json({
+        success: false,
+        message: "Required fields missing",
+      });
+    }
+
+    const product = await Products.create({
+      name,
+      description,
+      price,
+      category,
+      stock,
+      image,
+      originalPrice,
+      brand
+    //   createdBy: req.user._id, // admin user
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Product created successfully",
+      product,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

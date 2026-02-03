@@ -1,10 +1,11 @@
 import express from 'express';
-import { registerUser, loginUser, GetMe, GetProducts, GetQuery, GetCart, PutCart,DelCart,GetProductInfo} from "../controllers/authController.js";
-import { authMiddleware } from '../middleware/protect.js';
+import { registerUser, loginUser, GetMe, GetProducts, GetQuery, GetCart, PutCart,DelCart,GetProductInfo, createProduct} from "../controllers/authController.js";
+import { authMiddleware,admin } from '../middleware/protect.js';
 const app_router= express.Router();
  
 app_router.post('/register', registerUser);
 app_router.post('/login', loginUser);
+app_router.post('/createProduct',authMiddleware, admin, createProduct);
 
 app_router.get('/me',authMiddleware, GetMe)
 app_router.get('/cart',authMiddleware, GetCart)
