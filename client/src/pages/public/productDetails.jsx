@@ -5,8 +5,8 @@ import { Card } from "../../components/ui/card";
 import ProductCardContent from "../../components/productCardContent";
 import UseCart from "../../context/useCart";
 import { Header } from "../../components/header";
-import { Star, ShoppingCart, ChevronsRight,ArrowRightIcon } from "lucide-react";
-import PageSkeleton from "../../components/skeletons/pageSkeleton.jsx";
+import { Star, ShoppingCart, ChevronsRight, ArrowRightIcon } from "lucide-react";
+import ProDetailSkeleton from "../../components/skeletons/proDetailSkeleton.jsx";
 // import axios from "axios";
 
 export default function ProductDetails() {
@@ -17,7 +17,7 @@ export default function ProductDetails() {
     const { cart, handleAddToCart } = UseCart()
     const [openMobileSearch, setOpenMobileSearch] = useState(false)
     const [mainphoto, setMainPhoto] = useState(null)
-
+    const [loading, setLoading] = useState(true)
     const cartIds = useMemo(
         () => new Set(cart.map(item => item.productId._id)),
         [cart]
@@ -26,13 +26,16 @@ export default function ProductDetails() {
     useEffect(() => {
         setMainPhoto(null)
         async function fetchProduct() {
+            setLoading(true);
             try {
                 const data = await getproductInfo(id)
                 setProduct(data)
                 const productList = await getproductList(data.category)
                 setSimilarProducts(productList)
+                setLoading(false)
             } catch (err) {
                 console.log(err)
+                setLoading(false)
             }
         }
 
@@ -45,12 +48,13 @@ export default function ProductDetails() {
         }
     }, [product])
 
-    if (!product) return <PageSkeleton />;
+    // if (!product) return <ProDetailSkeleton />;
+    if (loading) return <ProDetailSkeleton />;
 
     return (
         <div className="bg-gray-50  flex flex-col justify-between" onClick={() => setOpenMobileSearch(false)}>
             <Header setOpenMobileSearch={setOpenMobileSearch} openMobileSearch={openMobileSearch} />
-            <div className="container mx-auto px-4 py-6 ">
+            <div className="container mx-auto px-4 2xl:py-0 py-6 ">
 
                 {/* TOP SECTION */}
                 <div className="grid grid-cols-1 md:grid-cols-2 2xl:p-12 2xl:gap-10 xl:gap-5 gap-3 ">
@@ -72,8 +76,8 @@ export default function ProductDetails() {
                             </div>
                             <div className="flex items-center justify-center w-full sm:min-h-100 ">
                                 <img
-                                    src={mainphoto}
-                                    className="max-w-full max-h-full object-contain"
+                                    src={mainphoto} alt="not found"
+                                    className="max-w-full max-h-full aspect-square object-contain"
                                 />
                             </div>
                             {/* </div> */}
@@ -83,16 +87,20 @@ export default function ProductDetails() {
 
                         <div className="flex flex-col lg:flex-row md:flex-col gap-2">
 
-                            <button onClick={(e) => {e.stopPropagation()
-                            if (cartIds.has(product._id)) {
-                                navigate("/cart")
-                            } else { handleAddToCart(product)}}} className=" w-full flex justify-center items-center gap-2  py-3 rounded border border-purple-500 text-purple-500 font-semibold">
-                                <ShoppingCart />{cartIds.has(product._id) ? <div className="flex justify-center items-center gap-2">Goto Cart <ArrowRightIcon/></div> : "Add to Cart"}
+                            <button onClick={(e) => {
+                                e.stopPropagation()
+                                if (cartIds.has(product._id)) {
+                                    navigate("/cart")
+                                } else { handleAddToCart(product) }
+                            }}
+                                className=" w-full flex justify-center items-center gap-2  py-3 rounded border border-purple-500 text-purple-500 font-semibold">
+                                <ShoppingCart />{cartIds.has(product._id) ? <div className="flex justify-center items-center gap-2">Goto Cart <ArrowRightIcon />
+                                </div> : "Add to Cart"}
                             </button>
 
                             <button className="flex justify-center items-center w-full border bg-purple-500 py-3 rounded text-white text-[20px] font-semibold">
 
-                               <ChevronsRight />
+                                <ChevronsRight />
 
                                 Buy Now
                             </button>
@@ -122,10 +130,10 @@ export default function ProductDetails() {
                             </div>
                         </div>
                         <div className="p-6 border border-[#e6e6e6] rounded-2xl">
-                                <p>{product.description}</p>
+                            <p>{product.description}</p>
                         </div>
                         <div className="p-6 border border-[#e6e6e6] rounded-2xl">
-                                <p>Avalable stock: {product.stock}ps</p>
+                            <p>Avalable stock: {product.stock}ps</p>
                         </div>
                     </div>
                 </div>

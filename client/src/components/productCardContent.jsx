@@ -43,9 +43,9 @@ const ProductCardContent = React.memo(function ProductCardContent({
                         {product.badge}
                     </Badge>
                     {!imageLoaded && (
-                        <div className="animate-pulse  bg-zinc-50 ">
-                            <div className="bg-zinc-300 aspect-square w-full" />
-                        </div>
+                      <div className="absolute inset-0 bg-white " >
+                        <div className="bg-gray-300 animate-pulse aspect-square w-full" />
+                      </div>
                     )}
                     <div className={imageLoaded ? "block" : "hidden"}>
                         <ImageWithFallback

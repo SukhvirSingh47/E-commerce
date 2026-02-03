@@ -2,7 +2,7 @@ export default function UserDashboardSkeleton() {
   return (
     <div className="bg-gray-50 min-h-dvh flex flex-col gap-9 animate-pulse">
       {/* HEADER SKELETON */}
-      <div className="h-16 bg-white shadow" />
+      <div className="h-20 bg-white shadow" />
 
       <div className="container mx-auto">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6">
