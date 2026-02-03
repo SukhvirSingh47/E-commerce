@@ -44,11 +44,11 @@ export function RegisterForm({ resetkey, loading }) {
         setres("");
     }, [resetkey])
 
-    useEffect(() => {
-        if (isUser.isLogin) {
-            navigate("/");
-        }
-    }, [isUser.isLogin])
+    // useEffect(() => {
+    //     if (isUser.isLogin) {
+    //         navigate("/");
+    //     }
+    // }, [isUser.isLogin])
     return (
         <div className="w-3/4 relative">
             <h2 className="text-3xl font-bold text-gray-800 mb-6">Register</h2>
