@@ -6,7 +6,7 @@ import ProductCardContent from "../../components/productCardContent";
 import { Header } from "../../components/header.jsx";
 import Footer from "../../components/footer.jsx";
 import { useSearchParams } from "react-router-dom";
-import NotFound from "../../components/notFount.jsx";
+import NotFound from "../../components/notFound.jsx";
 import { getproductList } from "../../api/products.api.js";
 import { useNavigate } from "react-router-dom";
 export default function ProductLists() {
